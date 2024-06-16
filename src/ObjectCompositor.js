@@ -144,6 +144,14 @@ export class ObjectCompositor {
     return wrapperObject;
   }
 
+  resetScene() {
+    console.log("reset");
+    this.objects.forEach((object) => {
+      this.scene.remove(object);
+    });
+    this.objects = [];
+  }
+
   applyGamepadInput() {
     const activeObject = this.objects[this.objects.length - 1];
 
@@ -185,8 +193,11 @@ export class ObjectCompositor {
   }
 
   processKeyInput(e) {
-    if (e.code.includes("Digit"))
+    if (e.code.includes("Digit")) {
       this.applyMaterialFilter(parseInt(e.code.slice(-1)));
+    } else if (e.code == "KeyX") {
+      this.resetScene();
+    }
   }
 
   exportScene() {
