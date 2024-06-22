@@ -3,7 +3,6 @@ import { TransparencyLayer } from "./TransparencyLayer.js";
 import { ObjectCompositor } from "./ObjectCompositor.js";
 import { SketchManual } from "./SketchManual.js";
 import { CanvasExporter } from "./CanvasExporter.js";
-// import { SerialInput } from "./SerialInput.js";
 
 const app = {
   viewMode: false,
@@ -62,6 +61,9 @@ function processKeyInput(e) {
     case "KeyO":
       if (app.viewMode) app.tool.exportScene();
       break;
+    case "Escape":
+      window.location.replace("https://toolbox.komputer.space");
+      break;
   }
 }
 
@@ -94,14 +96,4 @@ function resize() {
     app.smallScreen = false;
     app.sketchManual.setSmallScreenGuides(false);
   }
-}
-
-// ---------
-
-export function importGlTF(object) {
-  replaceObject(object);
-}
-
-export function importImage(url) {
-  document.getElementById("img").src = url;
 }
