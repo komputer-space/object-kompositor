@@ -2,6 +2,7 @@
 @import "./dropzone.scss";
 @import "./sketch-guide.scss";
 @import "./transparency-layer.scss";
+@import "./info-layer.scss";
 
 @font-face {
   font-family: "Recursive";
@@ -31,8 +32,8 @@ body {
   pointer-events: none;
 }
 
-#counter {
-  pointer-events: auto;
+* {
+  box-sizing: border-box;
 }
 
 #app {

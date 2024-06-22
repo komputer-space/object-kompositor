@@ -1,0 +1,14 @@
+#info-layer {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  user-select: none;
+
+  .info {
+    color: var(--accent-orange);
+  }
+}

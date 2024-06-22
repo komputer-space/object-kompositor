@@ -5,6 +5,7 @@ import { ThreeExporter } from "./ThreeExporter";
 import { FileImporter } from "./FileImporter";
 import { GamePadInput } from "./GamePadInput";
 import { SerialInput } from "./SerialInput";
+import { InfoLayer } from "./InfoLayer";
 
 export class ObjectCompositor {
   constructor(canvas) {
@@ -12,6 +13,7 @@ export class ObjectCompositor {
     this.transparencyMode = false;
     this.scene = new THREE.Scene();
 
+    this.infoLayer = new InfoLayer();
     this.gltfLoader = new GLTFLoader();
     this.textureLoader = new THREE.TextureLoader();
 
@@ -281,14 +283,20 @@ export class ObjectCompositor {
   // --- FILE IMPORTS
 
   importGlTF(url) {
+    this.infoLayer.setActive(true);
     this.gltfLoader.load(
       url,
       (gltf) => {
         let importedObject = gltf.scene;
         importedObject = this.adaptObjectToScene(importedObject);
         this.addObject(importedObject);
+        this.infoLayer.setActive(false);
       },
-      undefined,
+      function (xhr) {
+        this.infoLayer.showLoadingIndicator(
+          Math.round((xhr.loaded / xhr.total) * 100)
+        );
+      }.bind(this),
       function (error) {
         console.log("could not load object");
         console.error(error);
@@ -298,10 +306,13 @@ export class ObjectCompositor {
   }
 
   importImage(url) {
+    this.infoLayer.setActive(true);
+    this.infoLayer.showInfo("processing …");
     this.textureLoader.load(
       url,
       (texture) => {
         this.applyTexture(texture);
+        this.infoLayer.setActive(false);
       },
       undefined,
       function (error) {

@@ -40,7 +40,6 @@ export class FileImporter {
           console.log("filetype: gltf");
           fileURL = await this.readFile(file);
           this.processor.importGlTF(fileURL);
-          this.processGlTF(fileURL);
           break;
         default:
           console.log("not a valid file");
