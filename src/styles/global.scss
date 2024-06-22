@@ -67,3 +67,25 @@ body {
   background-image: none;
   -webkit-text-fill-color: initial;
 }
+
+#view-mode-indicator {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  display: none;
+
+  div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  img {
+    width: 100px;
+  }
+}

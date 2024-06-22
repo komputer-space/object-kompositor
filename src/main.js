@@ -70,6 +70,8 @@ function processKeyInput(e) {
 function toggleViewMode() {
   console.log("toggle view mode");
   app.viewMode = !app.viewMode;
+  const viewModeIndicator = document.getElementById("view-mode-indicator");
+  viewModeIndicator.style.display = app.viewMode ? "flex" : "none";
   app.tool.setViewMode(app.viewMode);
 }
 

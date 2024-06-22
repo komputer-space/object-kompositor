@@ -17,6 +17,8 @@ export class ObjectCompositor {
     this.gltfLoader = new GLTFLoader();
     this.textureLoader = new THREE.TextureLoader();
 
+    this.freeze = false;
+
     this.camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -83,12 +85,15 @@ export class ObjectCompositor {
   }
 
   update() {
-    if (this.objects.length > 0) {
-      this.gamePadInput.update();
-      this.applyGamepadInput();
-      this.processSerialData();
+    if (!this.freeze) {
+      if (this.objects.length > 0) {
+        this.gamePadInput.update();
+        this.applyGamepadInput();
+        this.processSerialData();
+      }
+      this.orbitControls.update();
     }
-    this.orbitControls.update();
+
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -98,7 +103,9 @@ export class ObjectCompositor {
     this.renderer.setSize(width, height);
   }
 
-  setViewMode(value) {}
+  setViewMode(value) {
+    this.freeze = value;
+  }
 
   setTransparencyMode(value) {
     this.transparencyMode = value;
