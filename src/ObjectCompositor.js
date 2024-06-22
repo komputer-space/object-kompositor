@@ -92,6 +92,12 @@ export class ObjectCompositor {
     this.renderer.render(this.scene, this.camera);
   }
 
+  resize(width, height) {
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(width, height);
+  }
+
   setViewMode(value) {}
 
   setTransparencyMode(value) {

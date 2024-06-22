@@ -17,18 +17,14 @@ const app = {
 function setup() {
   app.sketchManual = new SketchManual();
   app.canvasExporter = new CanvasExporter(app.canvas);
-  // app.serialInput = new SerialInput(115200);
-  app.objectCompositor = new ObjectCompositor(app.canvas);
+  app.tool = new ObjectCompositor(app.canvas);
 
   app.transparencyLayer = new TransparencyLayer();
   app.transparencyLayer.addObject(app, "Application");
   app.transparencyLayer.addObject(app.transparencyLayer, "Transparency Layer");
   app.transparencyLayer.addObject(app.sketchManual.settings, "Settings");
-  app.transparencyLayer.addObject(app.objectCompositor, "Object Kompositor");
-  app.transparencyLayer.addObject(
-    app.objectCompositor.gamePadInput,
-    "Gamepad Controls"
-  );
+  app.transparencyLayer.addObject(app.tool, "Object Kompositor");
+  app.transparencyLayer.addObject(app.tool.gamePadInput, "Gamepad Controls");
 
   setTransparencyMode(true);
 
@@ -36,12 +32,11 @@ function setup() {
 
   window.onresize = resize;
   resize();
-
   update();
 }
 
 function update() {
-  app.objectCompositor.update();
+  app.tool.update();
   app.transparencyLayer.updateDebug();
   requestAnimationFrame(update);
 }
@@ -55,7 +50,7 @@ function processKeyInput(e) {
     case "Space":
       toggleViewMode();
       break;
-    case "KeyD":
+    case "KeyF":
       toggleTransparencyMode();
       break;
     case "KeyR":
@@ -65,7 +60,7 @@ function processKeyInput(e) {
       if (app.viewMode) app.canvasExporter.saveImage();
       break;
     case "KeyO":
-      if (app.viewMode) app.objectCompositor.exportScene();
+      if (app.viewMode) app.tool.exportScene();
       break;
   }
 }
@@ -73,7 +68,7 @@ function processKeyInput(e) {
 function toggleViewMode() {
   console.log("toggle view mode");
   app.viewMode = !app.viewMode;
-  app.objectCompositor.setViewMode(app.viewMode);
+  app.tool.setViewMode(app.viewMode);
 }
 
 function toggleTransparencyMode() {
@@ -85,11 +80,13 @@ function toggleTransparencyMode() {
 function setTransparencyMode(val) {
   app.transparencyMode = val;
   app.transparencyLayer.setActive(val);
-  app.objectCompositor.setTransparencyMode(val);
+  app.tool.setTransparencyMode(val);
 }
 
 function resize() {
   const width = window.innerWidth;
+  const height = window.innerHeight;
+  app.tool.resize(width, height);
   if (width < 600) {
     app.smallScreen = true;
     app.sketchManual.setSmallScreenGuides(true);
