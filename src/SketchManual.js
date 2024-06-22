@@ -1,4 +1,4 @@
-import * as debugLayer from "./debugLayer.js";
+import * as debugLayer from "./TransparencyLayer.js";
 
 export class SketchManual {
   constructor(settings) {
@@ -10,7 +10,6 @@ export class SketchManual {
     } else {
       this.settings = settings;
     }
-    debugLayer.addObject(this.settings);
 
     this.appDomElement = document.getElementById("app");
     this.smallScreenNote = document.getElementById("small-screen-note");

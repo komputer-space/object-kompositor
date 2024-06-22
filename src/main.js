@@ -1,5 +1,5 @@
 import "./styles/global.scss";
-import * as debugLayer from "./debugLayer.js";
+import { TransparencyLayer } from "./TransparencyLayer.js";
 import { ObjectCompositor } from "./ObjectCompositor.js";
 import { SketchManual } from "./SketchManual.js";
 import { CanvasExporter } from "./CanvasExporter.js";
@@ -20,9 +20,17 @@ function setup() {
   // app.serialInput = new SerialInput(115200);
   app.objectCompositor = new ObjectCompositor(app.canvas);
 
-  debugLayer.initDebugLayer();
-  debugLayer.addObject(app);
-  // debugLayer.addObject(app.serialInput);
+  app.transparencyLayer = new TransparencyLayer();
+  app.transparencyLayer.addObject(app, "Application");
+  app.transparencyLayer.addObject(app.transparencyLayer, "Transparency Layer");
+  app.transparencyLayer.addObject(app.sketchManual.settings, "Settings");
+  app.transparencyLayer.addObject(app.objectCompositor, "Object Kompositor");
+  app.transparencyLayer.addObject(
+    app.objectCompositor.gamePadInput,
+    "Orbit Controls"
+  );
+
+  setTransparencyMode(true);
 
   document.onkeydown = processKeyInput;
 
@@ -34,7 +42,7 @@ function setup() {
 
 function update() {
   app.objectCompositor.update();
-  debugLayer.updateDebug();
+  app.transparencyLayer.updateDebug();
   requestAnimationFrame(update);
 }
 
@@ -69,10 +77,15 @@ function toggleViewMode() {
 }
 
 function toggleTransparencyMode() {
-  debugLayer.toggleDebugLayer();
   console.log("toggle transparency layer");
-  app.transparencyMode = !app.transparencyMode;
-  app.objectCompositor.setTransparencyMode(app.transparencyMode);
+  const active = !app.transparencyMode;
+  setTransparencyMode(active);
+}
+
+function setTransparencyMode(val) {
+  app.transparencyMode = val;
+  app.transparencyLayer.setActive(val);
+  app.objectCompositor.setTransparencyMode(val);
 }
 
 function resize() {

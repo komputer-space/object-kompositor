@@ -5,11 +5,11 @@ import { ThreeExporter } from "./ThreeExporter";
 import { FileImporter } from "./FileImporter";
 import { GamePadInput } from "./GamePadInput";
 import { SerialInput } from "./SerialInput";
-import { color } from "three/examples/jsm/nodes/Nodes.js";
 
 export class ObjectCompositor {
   constructor(canvas) {
     this.canvas = canvas;
+    this.transparencyMode = false;
     this.scene = new THREE.Scene();
 
     this.gltfLoader = new GLTFLoader();
@@ -93,11 +93,16 @@ export class ObjectCompositor {
   setViewMode(value) {}
 
   setTransparencyMode(value) {
+    this.transparencyMode = value;
+    this.updateTransparency();
+  }
+
+  updateTransparency() {
+    console.log("wireframe");
     this.objects.forEach((obj) => {
       obj.traverse((element) => {
-        // console.log(element.material)
         if (element.material) {
-          element.material.wireframe = value;
+          element.material.wireframe = this.transparencyMode;
           element.material.needsUpdate = true;
         }
       });
@@ -113,6 +118,7 @@ export class ObjectCompositor {
     this.objects.push(newObject);
     if (oldObject) newObject.applyMatrix4(oldObject.matrix);
     this.scene.add(newObject);
+    this.updateTransparency();
   }
 
   addObject(newObject) {
@@ -120,6 +126,7 @@ export class ObjectCompositor {
     console.log(newObject);
     this.objects.push(newObject);
     this.scene.add(newObject);
+    this.updateTransparency();
   }
 
   adaptObjectToScene(object) {
@@ -268,6 +275,7 @@ export class ObjectCompositor {
       default:
         break;
     }
+    this.updateTransparency();
   }
 
   // --- FILE IMPORTS

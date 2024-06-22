@@ -1,13 +1,25 @@
 @import "./ui.scss";
 @import "./dropzone.scss";
 @import "./sketch-guide.scss";
+@import "./transparency-layer.scss";
+
+@font-face {
+  font-family: "Recursive";
+  font-weight: 300 1000;
+  src: url(/fonts/Recursive-VariableFont_CASL,CRSV,MONO,slnt,wght.woff2)
+    format("woff2-variations");
+}
 
 :root {
   font-family: monospace;
   font-size: 16px;
+  --accent-orange: #ff5414;
 }
 
 body {
+  font-family: "Recursive", monospace;
+  font-variation-settings: "slnt" 0, "CASL" 0, "CRSV" 0.5, "MONO" 1;
+
   height: 100vh;
   width: 100vw;
   padding: 0;
@@ -44,4 +56,11 @@ body {
 
 #backend-info {
   pointer-events: all;
+}
+
+*::selection {
+  background-color: var(--accent-orange);
+  color: black;
+  background-image: none;
+  -webkit-text-fill-color: initial;
 }

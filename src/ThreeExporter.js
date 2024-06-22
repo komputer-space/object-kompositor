@@ -1,4 +1,4 @@
-import * as debugLayer from "./debugLayer.js";
+import * as debugLayer from "./TransparencyLayer.js";
 import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
 
 export class ThreeExporter {
