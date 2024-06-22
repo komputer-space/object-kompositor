@@ -10,15 +10,30 @@ import { InfoLayer } from "./InfoLayer";
 export class ObjectCompositor {
   constructor(canvas) {
     this.canvas = canvas;
+
     this.transparencyMode = false;
-    this.scene = new THREE.Scene();
+    this.freeze = false;
+    this.currentFilter = 0;
 
     this.infoLayer = new InfoLayer();
     this.gltfLoader = new GLTFLoader();
     this.textureLoader = new THREE.TextureLoader();
 
-    this.freeze = false;
+    this.setupScene();
 
+    this.exporter = new ThreeExporter();
+    this.loader = new FileImporter(this);
+
+    this.gamePadInput = new GamePadInput();
+    this.serialInput = new SerialInput(115200);
+    document.addEventListener("keydown", (e) => this.processKeyInput(e));
+
+    this.importGlTF("/objects/goethe.glb");
+    this.applyMaterialFilter(3);
+  }
+
+  setupScene() {
+    this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -54,7 +69,6 @@ export class ObjectCompositor {
     this.scene.add(light2);
     // const helper2 = new THREE.DirectionalLightHelper(light2, 1);
     // this.scene.add(helper2);
-
     // const light3 = new THREE.DirectionalLight(0xffffff, 2);
     // light3.position.set(-10, -20, -10);
     // this.scene.add(light3);
@@ -67,21 +81,6 @@ export class ObjectCompositor {
     );
 
     this.objects = [];
-
-    // const geometry = new THREE.BoxGeometry(1, 1, 1);
-    // const material = new THREE.MeshBasicMaterial({ map: null });
-    // const cube = new THREE.Mesh(geometry, material);
-    // this.scene.add(cube);
-    // this.objects.push(cube);
-
-    this.exporter = new ThreeExporter();
-    this.loader = new FileImporter(this);
-
-    this.importGlTF("/objects/goethe.glb");
-
-    this.gamePadInput = new GamePadInput();
-    this.serialInput = new SerialInput(115200);
-    document.addEventListener("keydown", (e) => this.processKeyInput(e));
   }
 
   update() {
@@ -109,19 +108,23 @@ export class ObjectCompositor {
 
   setTransparencyMode(value) {
     this.transparencyMode = value;
-    this.updateTransparency();
+    this.setWireframe(value);
   }
 
-  updateTransparency() {
-    console.log("wireframe");
+  setWireframe(value) {
     this.objects.forEach((obj) => {
       obj.traverse((element) => {
         if (element.material) {
-          element.material.wireframe = this.transparencyMode;
+          element.material.wireframe = value;
           element.material.needsUpdate = true;
         }
       });
     });
+  }
+
+  updateObjects() {
+    this.setWireframe(this.transparencyMode);
+    this.applyMaterialFilter(this.currentFilter);
   }
 
   replaceObject(newObject) {
@@ -133,7 +136,7 @@ export class ObjectCompositor {
     this.objects.push(newObject);
     if (oldObject) newObject.applyMatrix4(oldObject.matrix);
     this.scene.add(newObject);
-    this.updateTransparency();
+    this.updateObjects();
   }
 
   addObject(newObject) {
@@ -141,7 +144,7 @@ export class ObjectCompositor {
     console.log(newObject);
     this.objects.push(newObject);
     this.scene.add(newObject);
-    this.updateTransparency();
+    this.updateObjects();
   }
 
   adaptObjectToScene(object) {
@@ -219,6 +222,8 @@ export class ObjectCompositor {
       this.applyMaterialFilter(parseInt(e.code.slice(-1)));
     } else if (e.code == "KeyX") {
       this.resetScene();
+    } else if (e.code == "Tab") {
+      // TODO: Load example files
     }
   }
 
@@ -252,7 +257,6 @@ export class ObjectCompositor {
   }
 
   applyMaterialFilter(index) {
-    console.log(index);
     switch (index) {
       case 1:
         const silhouMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -290,7 +294,8 @@ export class ObjectCompositor {
       default:
         break;
     }
-    this.updateTransparency();
+    this.currentFilter = index;
+    this.setWireframe(this.transparencyMode);
   }
 
   // --- FILE IMPORTS
