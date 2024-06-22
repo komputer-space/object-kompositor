@@ -1,6 +1,8 @@
 export class TransparencyLayer {
   constructor() {
-    this.debugLayerElement = document.getElementById("transparency-layer");
+    this.transparencyLayerElement =
+      document.getElementById("transparency-layer");
+    this.debugLayerElement = document.getElementById("debug-layer");
     this.active = false;
     this.debugObjects = [];
 
@@ -14,7 +16,7 @@ export class TransparencyLayer {
   }
 
   setActive(value) {
-    this.debugLayerElement.style.display = value ? "flex" : "none";
+    this.transparencyLayerElement.style.display = value ? "flex" : "none";
     this.active = value;
   }
 

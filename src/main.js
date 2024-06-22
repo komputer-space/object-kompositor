@@ -27,7 +27,7 @@ function setup() {
   app.transparencyLayer.addObject(app.objectCompositor, "Object Kompositor");
   app.transparencyLayer.addObject(
     app.objectCompositor.gamePadInput,
-    "Orbit Controls"
+    "Gamepad Controls"
   );
 
   setTransparencyMode(true);
@@ -62,10 +62,10 @@ function processKeyInput(e) {
       app.canvasExporter.toggleRecord();
       break;
     case "KeyS":
-      app.canvasExporter.saveImage();
+      if (app.viewMode) app.canvasExporter.saveImage();
       break;
     case "KeyO":
-      app.objectCompositor.exportScene();
+      if (app.viewMode) app.objectCompositor.exportScene();
       break;
   }
 }
