@@ -28,11 +28,15 @@ export class SerialInput {
     if (this.serial.port) {
       await this.serial.closePort();
       this.connected = false;
-      this.portButton.innerHTML = "Open Port";
+      this.portButton.innerHTML = "open port";
+      this.portButton.classList.remove("active");
     } else {
-      await this.serial.openPort(this.baudRate);
-      this.connected = true;
-      this.portButton.innerHTML = "Close Port";
+      const connected = await this.serial.openPort(this.baudRate);
+      if (connected) {
+        this.connected = true;
+        this.portButton.innerHTML = "close port";
+        this.portButton.classList.add("active");
+      }
     }
   }
 

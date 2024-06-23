@@ -1,7 +1,3 @@
-// TODO: multiple ports
-// TODO: multiple data types
-
-// need self = this for connect/disconnect functions
 let self;
 
 export class SerialPort {
@@ -70,11 +66,14 @@ export class SerialPort {
       // TODO: make port settings configurable
       // from calling script:
       await this.port.open({ baudRate: baudRate });
+      console.log(this.port.readable);
       // start the listenForSerial function:
       this.serialReadPromise = this.listenForSerial();
+      return true;
     } catch (err) {
       // if there's an error opening the port:
       console.error("There was an error opening the serial port:", err);
+      return false;
     }
   }
 
