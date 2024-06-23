@@ -12,16 +12,14 @@
 }
 
 :root {
-  font-family: monospace;
+  font-family: "Recursive", monospace;
+  font-variation-settings: "slnt" 0, "CASL" 0, "CRSV" 0.5, "MONO" 1;
   font-size: 16px;
   --accent-orange: #ff5414;
   --accent-blue: #6c52df;
 }
 
 body {
-  font-family: "Recursive", monospace;
-  font-variation-settings: "slnt" 0, "CASL" 0, "CRSV" 0.5, "MONO" 1;
-
   height: 100vh;
   width: 100vw;
   padding: 0;
@@ -78,6 +76,7 @@ body {
   flex-direction: column;
   align-items: center;
   display: none;
+  mix-blend-mode: exclusion;
 
   div {
     width: 100%;

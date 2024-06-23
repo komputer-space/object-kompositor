@@ -45,6 +45,7 @@ setup();
 // ---------
 
 function processKeyInput(e) {
+  document.activeElement.blur();
   switch (e.code) {
     case "Space":
       toggleViewMode();
