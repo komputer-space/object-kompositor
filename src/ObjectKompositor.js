@@ -9,24 +9,29 @@ import { InfoLayer } from "./InfoLayer";
 
 export class ObjectCompositor {
   constructor(canvas) {
-    this.canvas = canvas;
-
     this.transparencyMode = false;
     this.freeze = false;
-    this.currentFilter = 0;
-
-    this.infoLayer = new InfoLayer();
-    this.gltfLoader = new GLTFLoader();
-    this.textureLoader = new THREE.TextureLoader();
-
-    this.setupScene();
+    this.idle = false;
 
     this.exporter = new ThreeExporter();
     this.loader = new FileImporter(this);
 
+    this.infoLayer = new InfoLayer();
+
+    this.gltfLoader = new GLTFLoader();
+    this.textureLoader = new THREE.TextureLoader();
+
+    // -------
+
+    this.canvas = canvas;
+
+    this.currentFilter = 0;
+
     this.gamePadInput = new GamePadInput();
     this.serialInput = new SerialInput(115200);
     document.addEventListener("keydown", (e) => this.processKeyInput(e));
+
+    this.setupScene();
 
     this.importGlTF("/objects/goethe.glb");
     this.applyMaterialFilter(3);
@@ -83,6 +88,8 @@ export class ObjectCompositor {
     this.objects = [];
   }
 
+  // --- CORE METHODS
+
   update() {
     if (!this.freeze) {
       if (this.objects.length > 0) {
@@ -111,12 +118,16 @@ export class ObjectCompositor {
     this.setWireframe(value);
   }
 
+  setIdleMode(value) {
+    this.idle = value;
+  }
+
   setWireframe(value) {
     this.objects.forEach((obj) => {
       obj.traverse((element) => {
         if (element.material) {
           element.material.wireframe = value;
-          element.material.needsUpdate = true;
+          // element.material.needsUpdate = true;
         }
       });
     });
@@ -195,7 +206,8 @@ export class ObjectCompositor {
   }
 
   processSerialData() {
-    if (this.serialInput.connected) {
+    if (this.serialInput.connected && this.serialInput.serialData) {
+      // console.log(this.serialInput.serialData);
       const input = this.serialInput.serialData.slice(1, -1);
       const splitted = input.split(".");
       let data = [];
@@ -239,7 +251,7 @@ export class ObjectCompositor {
           element.material.map = texture;
           console.log("update texture");
           console.log(element.material);
-          element.material.needsUpdate = true;
+          // element.material.needsUpdate = true;
         }
       });
     });
@@ -250,7 +262,7 @@ export class ObjectCompositor {
       obj.traverse((element) => {
         if (element.material) {
           element.material = newMaterial;
-          element.material.needsUpdate = true;
+          // element.material.needsUpdate = true;
         }
       });
     });

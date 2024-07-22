@@ -39,7 +39,7 @@ export class TransparencyLayer {
       this.debugObjects.forEach((debugObject) => {
         Object.entries(debugObject.object).forEach(([key, value]) => {
           const debugElement = debugObject.debugElements[key];
-          this.updateDebugElement(debugElement, value);
+          if (debugElement) this.updateDebugElement(debugElement, value);
         });
       });
     }

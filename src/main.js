@@ -1,6 +1,6 @@
 import "./styles/global.scss";
 import { TransparencyLayer } from "./TransparencyLayer.js";
-import { ObjectCompositor } from "./ObjectCompositor.js";
+import { ObjectCompositor } from "./ObjectKompositor.js";
 import { SketchManual } from "./SketchManual.js";
 import { CanvasExporter } from "./CanvasExporter.js";
 
@@ -24,6 +24,7 @@ function setup() {
   app.transparencyLayer.addObject(app.sketchManual.settings, "Settings");
   app.transparencyLayer.addObject(app.tool, "Object Kompositor");
   app.transparencyLayer.addObject(app.tool.gamePadInput, "Gamepad Controls");
+  app.transparencyLayer.addObject(app.tool.serialInput, "Object Kontroller");
 
   setTransparencyMode(true);
 
@@ -47,10 +48,10 @@ setup();
 function processKeyInput(e) {
   document.activeElement.blur();
   switch (e.code) {
-    case "Space":
+    case "KeyF":
       toggleViewMode();
       break;
-    case "KeyF":
+    case "Space":
       toggleTransparencyMode();
       break;
     case "KeyR":

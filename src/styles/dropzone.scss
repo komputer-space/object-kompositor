@@ -9,6 +9,6 @@
 }
 
 #dropzone.active {
-  background: crimson;
+  background: var(--accent-orange);
   z-index: 1;
 }

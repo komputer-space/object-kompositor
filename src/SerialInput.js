@@ -10,7 +10,7 @@ export class SerialInput {
 
     this.baudRate = baudRate;
     this.connected = false;
-    this.serialData;
+    this.serialData = "";
     this.serial = new SerialPort();
     console.log(this.serial);
     this.portButton = document.getElementById("serial-button");
