@@ -13,6 +13,9 @@ export class ObjectCompositor {
     this.freeze = false;
     this.idle = false;
 
+    this.exampleIndex = 0;
+    this.examples = ["goethe", "macintosh", "stuhl", "mate"];
+
     this.exporter = new ThreeExporter();
     this.loader = new FileImporter(this);
 
@@ -33,7 +36,7 @@ export class ObjectCompositor {
 
     this.setupScene();
 
-    this.importGlTF("/objects/goethe.glb");
+    this.importGlTF("/examples/goethe.glb");
     this.applyMaterialFilter(3);
   }
 
@@ -109,6 +112,14 @@ export class ObjectCompositor {
     this.renderer.setSize(width, height);
   }
 
+  loadNewExample() {
+    console.log("loading next example");
+    this.exampleIndex++;
+    if (this.exampleIndex >= this.examples.length) this.exampleIndex = 0;
+    const fileName = this.examples[this.exampleIndex];
+    this.importGlTF("/examples/" + fileName + ".glb", true);
+  }
+
   setViewMode(value) {
     this.freeze = value;
   }
@@ -120,73 +131,10 @@ export class ObjectCompositor {
 
   setIdleMode(value) {
     this.idle = value;
+    this.orbitControls.autoRotate = value;
   }
 
-  setWireframe(value) {
-    this.objects.forEach((obj) => {
-      obj.traverse((element) => {
-        if (element.material) {
-          element.material.wireframe = value;
-          // element.material.needsUpdate = true;
-        }
-      });
-    });
-  }
-
-  updateObjects() {
-    this.setWireframe(this.transparencyMode);
-    this.applyMaterialFilter(this.currentFilter);
-  }
-
-  replaceObject(newObject) {
-    console.log("replace");
-    console.log(newObject);
-    const oldObject = this.objects[this.objects.length - 1];
-    this.scene.remove(oldObject);
-    this.objects.pop();
-    this.objects.push(newObject);
-    if (oldObject) newObject.applyMatrix4(oldObject.matrix);
-    this.scene.add(newObject);
-    this.updateObjects();
-  }
-
-  addObject(newObject) {
-    console.log("add");
-    console.log(newObject);
-    this.objects.push(newObject);
-    this.scene.add(newObject);
-    this.updateObjects();
-  }
-
-  adaptObjectToScene(object) {
-    console.log("adapt");
-    const box = new THREE.Box3().setFromObject(object);
-    const offsetPosition = box.getCenter(new THREE.Vector3());
-    const scaleFactor = 2 / box.getSize(new THREE.Vector3()).y;
-    console.log(scaleFactor);
-    const wrapperObject = new THREE.Group();
-    wrapperObject.add(object);
-    const adaptedPosition = object.position.clone().sub(offsetPosition);
-    object.position.copy(adaptedPosition.multiplyScalar(scaleFactor));
-    object.scale.multiplyScalar(scaleFactor);
-    wrapperObject.traverse((obj) => {
-      obj.receiveShadow = false;
-      if (obj.isMesh) obj.geometry.computeVertexNormals();
-    });
-
-    // wrapperObject.userData = {ogMaterial: }
-
-    console.log(wrapperObject);
-    return wrapperObject;
-  }
-
-  resetScene() {
-    console.log("reset");
-    this.objects.forEach((object) => {
-      this.scene.remove(object);
-    });
-    this.objects = [];
-  }
+  // --- INPUTS
 
   applyGamepadInput() {
     const activeObject = this.objects[this.objects.length - 1];
@@ -239,8 +187,72 @@ export class ObjectCompositor {
     }
   }
 
-  exportScene() {
-    this.exporter.exportGlTF(this.scene);
+  // --- CUSTOM METHODS
+
+  setWireframe(value) {
+    this.objects.forEach((obj) => {
+      obj.traverse((element) => {
+        if (element.material) {
+          element.material.wireframe = value;
+          // element.material.needsUpdate = true;
+        }
+      });
+    });
+  }
+
+  updateObjects() {
+    this.setWireframe(this.transparencyMode);
+    this.applyMaterialFilter(this.currentFilter);
+  }
+
+  replaceObject(newObject) {
+    console.log("replace");
+    console.log(newObject);
+    const oldObject = this.objects[this.objects.length - 1];
+    this.scene.remove(oldObject);
+    this.objects.pop();
+    this.objects.push(newObject);
+    if (oldObject) newObject.applyMatrix4(oldObject.matrix);
+    this.scene.add(newObject);
+    this.updateObjects();
+  }
+
+  addObject(newObject) {
+    console.log("add");
+    console.log(newObject);
+    this.objects.push(newObject);
+    this.scene.add(newObject);
+    this.updateObjects();
+  }
+
+  adaptObjectToScene(object) {
+    console.log("adapt");
+    const box = new THREE.Box3().setFromObject(object);
+    const offsetPosition = box.getCenter(new THREE.Vector3());
+    const scaleFactor = 2.5 / box.getSize(new THREE.Vector3()).y;
+    console.log(scaleFactor);
+    const wrapperObject = new THREE.Group();
+    wrapperObject.add(object);
+    const adaptedPosition = object.position.clone().sub(offsetPosition);
+    object.position.copy(adaptedPosition.multiplyScalar(scaleFactor));
+    object.scale.multiplyScalar(scaleFactor);
+    wrapperObject.traverse((obj) => {
+      obj.receiveShadow = false;
+      if (obj.isMesh) obj.geometry.computeVertexNormals();
+    });
+
+    // wrapperObject.userData = {ogMaterial: }
+
+    console.log(wrapperObject);
+    return wrapperObject;
+  }
+
+  resetScene() {
+    console.log("reset");
+    this.objects.forEach((object) => {
+      this.scene.remove(object);
+    });
+    this.objects = [];
   }
 
   applyTexture(texture) {
@@ -310,16 +322,26 @@ export class ObjectCompositor {
     this.setWireframe(this.transparencyMode);
   }
 
+  // --- FILE EXPORTS
+
+  exportScene() {
+    this.exporter.exportGlTF(this.scene);
+  }
+
   // --- FILE IMPORTS
 
-  importGlTF(url) {
+  importGlTF(url, replace = false) {
     this.infoLayer.setActive(true);
     this.gltfLoader.load(
       url,
       (gltf) => {
         let importedObject = gltf.scene;
         importedObject = this.adaptObjectToScene(importedObject);
-        this.addObject(importedObject);
+        if (replace) {
+          this.replaceObject(importedObject);
+        } else {
+          this.addObject(importedObject);
+        }
         this.infoLayer.setActive(false);
       },
       function (xhr) {
