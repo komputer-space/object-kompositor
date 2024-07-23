@@ -19,7 +19,6 @@
   }
 
   #debug-layer {
-    font-size: 0.875rem;
     display: flex;
     flex-shrink: 1;
     flex-direction: column;
@@ -92,6 +91,15 @@
 
     p {
       margin: 1rem 0;
+    }
+
+    ul {
+      padding: 0;
+      list-style: none;
+
+      li::before {
+        content: "–";
+      }
     }
   }
 
