@@ -29,10 +29,9 @@ function setup() {
   app.transparencyLayer = new TransparencyLayer();
   app.transparencyLayer.addObject(app, "Application");
   app.transparencyLayer.addObject(app.transparencyLayer, "Transparency Layer");
-  app.transparencyLayer.addObject(app.sketchManual.settings, "Settings");
   app.transparencyLayer.addObject(app.tool, "Object Kompositor");
-  app.transparencyLayer.addObject(app.tool.gamePadInput, "Gamepad Controls");
   app.transparencyLayer.addObject(app.tool.serialInput, "Object Kontroller");
+  app.transparencyLayer.addObject(app.tool.gamePadInput, "Gamepad Controls");
 
   setTransparencyMode(true);
 
@@ -88,7 +87,7 @@ function inputTimeout() {
   app.inputTimeout = setTimeout(function () {
     console.log("input timeout, enter idle");
     app.tool.setIdleMode(true);
-  }, 5000);
+  }, 30000);
 }
 
 function setupInputs() {
